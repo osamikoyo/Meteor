@@ -22,6 +22,8 @@ func (d Database) Get(date time.Time) (models.Day, error) {
 }
 
 func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, error) {
+	var period models.Period
+
 	fdate1 := date1.Format(TIMELAYOUT)
 	fdate2 := date2.Format(TIMELAYOUT)
 
@@ -31,4 +33,57 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 	if err != nil {
 		return models.Period{}, err
 	}
+
+	datesecond, err := time.Parse(TIMELAYOUT, fdate2)
+	if err != nil {
+		return models.Period{}, err
+	}
+
+	if err := d.Where("date >= ? AND date <= ?", datefirst, datesecond).Find(&days).Error; err != nil {
+		return models.Period{}, err
+	} else {
+		var (
+			windspeed        float32
+			precipitation    float32
+			tempday          float32
+			tempnight        float32
+			countsnowtrue    uint16
+			countsnowfalse   uint16
+			countcloudytrue  uint16
+			countcloudyfalse uint16
+		)
+
+		for _, day := range days {
+			windspeed = windspeed + float32(day.WindSpeed)
+			precipitation = precipitation + float32(day.Precipitation)
+			tempday = tempday + float32(day.TempDay)
+			tempnight = tempnight + float32(day.TempNight)
+			if day.Snow {
+				countsnowtrue++
+			} else {
+				countsnowfalse++
+			}
+			if day.Cloudy {
+				countcloudytrue++
+			} else {
+				countcloudyfalse++
+			}
+		}
+
+		windspeed = windspeed / float32(len(days))
+		precipitation = precipitation / float32(len(days))
+		tempday = tempday / float32(len(days))
+		tempnight = tempnight / float32(len(days))
+
+		per := models.Period{
+			FirstDate:           days[0].Date,
+			SecondDate:          days[len(days)-1].Date,
+			MiddlePrecipitation: precipitation,
+			MiddleTempDay:       tempday,
+			MiddleTempNight:     tempnight,
+			MiddleWindSpeed:     windspeed,
+		}
+	}
+
+	return period, nil
 }

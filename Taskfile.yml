@@ -1,0 +1,12 @@
+version: 3
+
+tasks:
+  docker-build:
+    cmds:
+      - sudo docker build -t meteor .
+  docker-run:
+    cmds:
+      - sudo docker run --rm -p 8080:8080 meteor
+  build:
+    cmds:
+      - go build -o bin/app cmd/meteor/main.go

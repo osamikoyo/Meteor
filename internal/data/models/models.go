@@ -15,9 +15,10 @@ type Day struct {
 type Period struct {
 	FirstDate           time.Time
 	SecondDate          time.Time
-	MiddleTemp          int16
-	MiddleWindSpeed     uint32
-	Show                bool
-	MiddlePrecipitation uint64
+	MiddleTempDay       float32
+	MiddleTempNight     float32
+	MiddleWindSpeed     float32
+	Snow                bool
+	MiddlePrecipitation float32
 	Cloudy              bool
 }
