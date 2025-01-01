@@ -22,8 +22,6 @@ func (d Database) Get(date time.Time) (models.Day, error) {
 }
 
 func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, error) {
-	var period models.Period
-
 	fdate1 := date1.Format(TIMELAYOUT)
 	fdate2 := date2.Format(TIMELAYOUT)
 
@@ -51,6 +49,8 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 			countsnowfalse   uint16
 			countcloudytrue  uint16
 			countcloudyfalse uint16
+			cloudy           bool
+			snow             bool
 		)
 
 		for _, day := range days {
@@ -75,6 +75,18 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 		tempday = tempday / float32(len(days))
 		tempnight = tempnight / float32(len(days))
 
+		if countcloudyfalse < countcloudytrue {
+			cloudy = true
+		} else {
+			cloudy = false
+		}
+
+		if countsnowfalse < countsnowtrue {
+			snow = true
+		} else {
+			snow = false
+		}
+
 		per := models.Period{
 			FirstDate:           days[0].Date,
 			SecondDate:          days[len(days)-1].Date,
@@ -82,8 +94,10 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 			MiddleTempDay:       tempday,
 			MiddleTempNight:     tempnight,
 			MiddleWindSpeed:     windspeed,
+			Snow:                snow,
+			Cloudy:              cloudy,
 		}
-	}
 
-	return period, nil
+		return per, nil
+	}
 }

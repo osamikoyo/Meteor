@@ -10,3 +10,7 @@ tasks:
   build:
     cmds:
       - go build -o bin/app cmd/meteor/main.go
+  run:
+    cmds:
+      - task build
+      - ./bin/app
