@@ -8,8 +8,7 @@
 *.so
 *.dylib
 .idea
-
-api.go
+/internal/keys/
 # Test binary, built with `go test -c`
 *.test
 
