@@ -6,6 +6,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/osamikoyo/meteor/internal/cities"
 	"github.com/osamikoyo/meteor/internal/data/models"
+	"github.com/osamikoyo/meteor/internal/handler"
 	"github.com/osamikoyo/meteor/internal/keys"
 	"github.com/osamikoyo/meteor/internal/service"
 	"github.com/osamikoyo/meteor/internal/transport"
@@ -20,23 +21,28 @@ type App struct {
 	logger    loger.Logger
 	service   service.Service
 	apiRouter transport.ApiRouter
+	handler   handler.Handler
 }
 
 func Init() *App {
 	s := gocron.NewScheduler(time.Local)
 	serv := service.New()
 	logger := loger.New()
+
 	return &App{
-		timer:   s,
-		service: serv,
-		logger:  logger,
+		timer:     s,
+		service:   serv,
+		logger:    logger,
+		apiRouter: transport.New(),
+		handler: handler.Handler{
+			ST: serv,
+		},
 	}
 }
 
 func (a *App) route() {
 	var ch chan error
 	var data chan models.WeatherResponses
-
 	var wg *sync.WaitGroup
 	for _, c := range cities.Cities {
 		wg.Add(1)
@@ -62,6 +68,8 @@ func (a *App) Run() {
 	a.timer.StartAsync()
 
 	r := chi.NewRouter()
+
+	a.handler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Handler: r,

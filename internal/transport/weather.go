@@ -6,16 +6,23 @@ import (
 	"github.com/osamikoyo/meteor/internal/data/models"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type ApiRouter struct {
 	URL string
-	ctx context.Context
+	Ctx context.Context
 	key string
 }
 
+func New() ApiRouter {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Hour)
+	defer cancel()
+	return ApiRouter{Ctx: ctx}
+}
+
 func (a *ApiRouter) ApiScanner(ch chan error, dataCh chan models.WeatherResponses) {
-	req, err := http.NewRequestWithContext(a.ctx, "GET", a.URL, nil)
+	req, err := http.NewRequestWithContext(a.Ctx, "GET", a.URL, nil)
 	if err != nil {
 		ch <- err
 	}

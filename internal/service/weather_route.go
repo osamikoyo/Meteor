@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-const TIMELAYOUT = "11.11.24"
 const CLOUDYRANGE = 3
 
 type WeatherStorage struct {
@@ -31,7 +30,7 @@ func (s *WeatherStorage) Add(response models.WeatherResponses) error {
 		w.Cloudy = true
 	}
 
-	date, err := time.Parse(TIMELAYOUT, time.Now().String())
+	date, err := time.Parse(data.TIMELAYOUT, time.Now().String())
 	if err != nil {
 		return err
 	}
@@ -42,12 +41,12 @@ func (s *WeatherStorage) Add(response models.WeatherResponses) error {
 }
 
 func (s *WeatherStorage) GetByRange(date1 string, date2 string) (models.Period, error) {
-	datefirst, err := time.Parse(TIMELAYOUT, date1)
+	datefirst, err := time.Parse(data.TIMELAYOUT, date1)
 	if err != nil {
 		return models.Period{}, err
 	}
 
-	datesecond, err := time.Parse(TIMELAYOUT, date2)
+	datesecond, err := time.Parse(data.TIMELAYOUT, date2)
 	if err != nil {
 		return models.Period{}, err
 	}
@@ -57,7 +56,7 @@ func (s *WeatherStorage) GetByRange(date1 string, date2 string) (models.Period, 
 }
 
 func (s *WeatherStorage) GetByDay(date string) (models.Day, error) {
-	times, err := time.Parse(TIMELAYOUT, date)
+	times, err := time.Parse(data.TIMELAYOUT, date)
 	if err != nil {
 		return models.Day{}, err
 	}
