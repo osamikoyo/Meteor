@@ -12,7 +12,18 @@ type WeatherStorage struct {
 	ST data.Storage
 }
 
-func (s *WeatherStorage) Add(w models.Day) error {
+func New() *WeatherStorage {
+	return &WeatherStorage{
+		ST: data.New(),
+	}
+}
+
+func (s *WeatherStorage) Add(response models.WeatherResponses) error {
+	var w models.Day
+	w.Temp = int16(response.Current.TempC)
+	w.WindSpeed = uint64(response.Current.WindMph)
+	w.Region = response.Location.Region
+
 	date, err := time.Parse(TIMELAYOUT, time.Now().String())
 	if err != nil {
 		return err

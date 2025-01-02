@@ -15,5 +15,11 @@ type App struct {
 
 func Init() *App {
 	s := gocron.NewScheduler(time.Local)
-
+	serv := service.New()
+	logger := loger.New()
+	return &App{
+		timer:   s,
+		service: serv,
+		logger:  logger,
+	}
 }

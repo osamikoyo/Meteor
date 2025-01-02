@@ -5,7 +5,7 @@ import (
 )
 
 type Service interface {
-	Add(models.Day) error
+	Add(response models.WeatherResponses) error
 	GetByRange(date1 string, date2 string) (models.Period, error)
 	GetByDay(date string) (models.Day, error)
 }
