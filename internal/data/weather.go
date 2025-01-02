@@ -42,7 +42,6 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 	} else {
 		var (
 			windspeed        float32
-			precipitation    float32
 			temp             float32
 			countsnowtrue    uint16
 			countsnowfalse   uint16
@@ -54,8 +53,7 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 
 		for _, day := range days {
 			windspeed = windspeed + float32(day.WindSpeed)
-			precipitation = precipitation + float32(day.Precipitation)
-			temp = temp + float32(day.TempDay)
+			temp = temp + float32(day.Temp)
 			if day.Snow {
 				countsnowtrue++
 			} else {
@@ -69,7 +67,6 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 		}
 
 		windspeed = windspeed / float32(len(days))
-		precipitation = precipitation / float32(len(days))
 		temp = temp / float32(len(days))
 
 		if countcloudyfalse < countcloudytrue {
@@ -85,13 +82,12 @@ func (d Database) GetByRange(date1 time.Time, date2 time.Time) (models.Period, e
 		}
 
 		per := models.Period{
-			FirstDate:           days[0].Date,
-			SecondDate:          days[len(days)-1].Date,
-			MiddlePrecipitation: precipitation,
-			MiddleTempDay:       temp,
-			MiddleWindSpeed:     windspeed,
-			Snow:                snow,
-			Cloudy:              cloudy,
+			FirstDate:       days[0].Date,
+			SecondDate:      days[len(days)-1].Date,
+			MiddleTempDay:   temp,
+			MiddleWindSpeed: windspeed,
+			Snow:            snow,
+			Cloudy:          cloudy,
 		}
 
 		return per, nil

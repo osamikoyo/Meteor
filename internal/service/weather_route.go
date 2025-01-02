@@ -7,6 +7,7 @@ import (
 )
 
 const TIMELAYOUT = "11.11.24"
+const CLOUDYRANGE = 3
 
 type WeatherStorage struct {
 	ST data.Storage
@@ -23,6 +24,12 @@ func (s *WeatherStorage) Add(response models.WeatherResponses) error {
 	w.Temp = int16(response.Current.TempC)
 	w.WindSpeed = uint64(response.Current.WindMph)
 	w.Region = response.Location.Region
+
+	if response.Current.Cloud < CLOUDYRANGE {
+		w.Cloudy = false
+	} else {
+		w.Cloudy = true
+	}
 
 	date, err := time.Parse(TIMELAYOUT, time.Now().String())
 	if err != nil {

@@ -3,13 +3,12 @@ package models
 import "time"
 
 type Day struct {
-	Date          time.Time `gorm:"type:date;primaryKey"`
-	Temp          int16
-	WindSpeed     uint64
-	Snow          bool
-	Precipitation uint64
-	Cloudy        bool
-	Region        string
+	Date      time.Time `gorm:"type:date;primaryKey"`
+	Temp      int16
+	WindSpeed uint64
+	Snow      bool
+	Cloudy    bool
+	Region    string
 }
 
 type Period struct {
